@@ -1,7 +1,7 @@
-ARG ARCH
-ARG TAG
+ARG ARCH=amd64
+ARG TAG=genotrance/pydock
 
-FROM $TAG:musl_base_$ARCH as musl
+FROM $TAG:musl_base_$ARCH AS musl
 
 RUN <<EOF
 # Exit on error

@@ -17,6 +17,15 @@ archtogoarch() {
     fi
 }
 
+PUSH_FLAG=""
+for arg in "$@"
+do
+    if [ "$arg" == "--push" ]; then
+        PUSH_FLAG="true"
+        break
+    fi
+done
+
 # Repost quay.io images to docker
 MUSLS=""
 MUSLSV=""
@@ -30,8 +39,10 @@ for arch in x86_64 i686 aarch64; do
     dtagv=$TAG:musl_base_$goarch-$VERSION
     docker tag $PYPA/$MUSL$arch $dtag
     docker tag $PYPA/$MUSL$arch $dtagv
-    docker push $dtag
-    docker push $dtagv
+    if [ "$PUSH_FLAG" == "true" ]; then
+        docker push $dtag
+        docker push $dtagv
+    fi
     MUSLS="$MUSLS $dtag"
     MUSLSV="$MUSLSV $dtagv"
 
@@ -40,20 +51,24 @@ for arch in x86_64 i686 aarch64; do
     dtagv=$TAG:glibc_base_$goarch-$VERSION
     docker tag $PYPA/$GLIBC$arch $dtag
     docker tag $PYPA/$GLIBC$arch $dtagv
-    docker push $dtag
-    docker push $dtagv
+    if [ "$PUSH_FLAG" == "true" ]; then
+        docker push $dtag
+        docker push $dtagv
+    fi
     GLIBS="$GLIBS $dtag"
     GLIBSV="$GLIBSV $dtagv"
 done
 
 # Create single manifest for all base images
-docker manifest create $TAG:musl_base $MUSLS
-docker manifest create $TAG:musl_base-$VERSION $MUSLSV
-docker manifest create $TAG:glibc_base $GLIBS
-docker manifest create $TAG:glibc_base-$VERSION $GLIBSV
+docker manifest create $TAG:musl_base $MUSLS --amend    
+docker manifest create $TAG:musl_base-$VERSION $MUSLSV --amend
+docker manifest create $TAG:glibc_base $GLIBS --amend
+docker manifest create $TAG:glibc_base-$VERSION $GLIBSV --amend
 
-# Push manifests
-docker manifest push $TAG:musl_base
-docker manifest push $TAG:musl_base-$VERSION
-docker manifest push $TAG:glibc_base
-docker manifest push $TAG:glibc_base-$VERSION
+if [ "$PUSH_FLAG" == "true" ]; then
+    # Push manifests
+    docker manifest push $TAG:musl_base
+    docker manifest push $TAG:musl_base-$VERSION
+    docker manifest push $TAG:glibc_base
+    docker manifest push $TAG:glibc_base-$VERSION
+fi

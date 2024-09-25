@@ -1,7 +1,7 @@
-ARG ARCH
-ARG TAG
+ARG ARCH=amd64
+ARG TAG=genotrance/pydock
 
-FROM $TAG:glibc_base_$ARCH as glibc
+FROM $TAG:glibc_base_$ARCH AS glibc
 
 RUN <<EOF
 # Exit on error
