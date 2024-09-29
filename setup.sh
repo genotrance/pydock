@@ -36,6 +36,3 @@ setup_venv $PY
 
 python3 -m pip install --upgrade pip setuptools build wheel auditwheel nuitka
 python3 -m pip cache purge
-
-# Python static libs
-cd /opt/_internal && tar xf static-libs-for-embedding-only.tar.xz && cd -

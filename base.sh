@@ -2,6 +2,8 @@
 
 source .env
 
+set -e
+
 PYPA=quay.io/pypa
 MUSL=musllinux_1_1_
 GLIBC=manylinux2014_

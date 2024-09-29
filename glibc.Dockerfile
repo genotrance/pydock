@@ -25,7 +25,18 @@ yum install -y patchelf || true
 yum clean all
 EOF
 
-COPY ../setup.sh /root/setup.sh
+# Python static libs
+RUN cd /opt/_internal && tar xf static-libs-for-embedding-only.tar.xz && cd -
+
+# Create a non-root user
+RUN useradd -ms /bin/bash pydock
+
+# Switch to the new user
+USER pydock
+
+# Set working directory
+WORKDIR /home/pydock
 
 # Setup common
-RUN /root/setup.sh
+COPY ../setup.sh /home/pydock/setup.sh
+RUN /home/pydock/setup.sh

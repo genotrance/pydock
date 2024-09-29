@@ -2,6 +2,8 @@
 
 source .env
 
+set -e
+
 # Check if --push is specified in command line
 PUSH_FLAG=""
 for arg in "$@"
